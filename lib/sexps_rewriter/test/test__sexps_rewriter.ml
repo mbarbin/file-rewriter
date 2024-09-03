@@ -56,6 +56,8 @@ let original_contents =
 ;;
 
 let%expect_test "libraries sorting" =
+  Err.For_test.wrap
+  @@ fun () ->
   let path = Fpath.v "path/lib/dune" in
   let sexps_rewriter =
     match Sexps_rewriter.create ~path ~original_contents with
@@ -220,6 +222,8 @@ let syntax_error =
 ;;
 
 let%expect_test "syntax-error" =
+  Err.For_test.wrap
+  @@ fun () ->
   let path = Fpath.v "my-dune-file" in
   save_file ~path ~contents:syntax_error;
   Err.For_test.protect (fun () ->
