@@ -115,8 +115,8 @@
    (and
     :with-dev-setup
     (>= 2.8.3)))
-  (err0
-   (>= 0.0.2))
+  (err
+   (>= 0.0.3))
   (expect_test_helpers_core
    (and
     (>= v0.17)

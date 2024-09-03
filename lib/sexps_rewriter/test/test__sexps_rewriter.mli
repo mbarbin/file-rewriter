@@ -13,3 +13,5 @@
 (*_  See the License for the specific language governing permissions and       *)
 (*_  limitations under the License.                                            *)
 (*_*****************************************************************************)
+
+(*_ This signature is deliberately empty. *)

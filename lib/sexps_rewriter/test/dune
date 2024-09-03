@@ -10,18 +10,17 @@
   -open
   Base
   -open
-  Err0
-  -open
   Expect_test_helpers_base)
  (libraries
   base
-  err0
+  err
   expect_test_helpers_core.expect_test_helpers_base
-  file_rewriter
+  file-rewriter
   fpath
   parsexp
   patdiff.expect_test_patdiff
-  sexps_rewriter)
+  sexps_rewriter
+  unix)
  (inline_tests)
  (instrumentation
   (backend bisect_ppx))
