@@ -115,6 +115,8 @@
    (and
     :with-dev-setup
     (>= 2.8.3)))
+  (err0
+   (>= 0.0.2))
   (expect_test_helpers_core
    (and
     (>= v0.17)
@@ -125,6 +127,14 @@
    (>= 0.7.3))
   (loc
    (>= 0.2.0))
+  (parsexp
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (patdiff
+   (and
+    (>= v0.17)
+    (< v0.18)))
   (ppx_compare
    (and
     (>= v0.17)
@@ -168,6 +178,8 @@
    (and
     (>= v0.17)
     (< v0.18)))
+  (sexps-rewriter
+   (= :version))
   (stdio
    (and
     (>= v0.17)
