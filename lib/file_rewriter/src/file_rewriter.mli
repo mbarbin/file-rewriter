@@ -73,7 +73,9 @@ val reset : t -> unit
 (** {1 Output} *)
 
 module Invalid_rewrites : sig
-  type t [@@deriving sexp_of]
+  type t
+
+  val sexp_of_t : t -> Sexplib0.Sexp.t
 end
 
 exception Invalid_rewrites of Invalid_rewrites.t

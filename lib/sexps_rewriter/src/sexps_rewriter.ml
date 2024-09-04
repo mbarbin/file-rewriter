@@ -89,10 +89,9 @@ let () =
     | _ -> assert false)
 ;;
 
-let position t sexp =
-  let positions = t.positions in
+let position { positions; original_sexps; _ } sexp =
   match
-    Parsexp.Positions.find_sub_sexp_in_list_phys positions t.original_sexps ~sub:sexp
+    Parsexp.Positions.find_sub_sexp_in_list_phys positions original_sexps ~sub:sexp
   with
   | Some range -> range
   | None -> raise (Position_not_found { positions : Parsexp.Positions.t; sexp : Sexp.t })

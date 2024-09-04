@@ -18,12 +18,13 @@
 
 (* [Sexps_rewriter] doesn't need to access the disk, but we're saving files on
    disk because [Err] can show file parts when displaying errors if the location
-   points to an existing file, which makes the test nicer and more
+   points to an existing file, which makes the tests nicer and more
    understandable. *)
 let save_file ~path ~contents =
   let paths = String.split (Fpath.to_string path) ~on:'/' in
   let rec aux dir = function
-    | [] | [ _ ] -> ()
+    | [] -> assert false [@coverage off]
+    | [ _ ] -> ()
     | item :: (_ :: _ as tl) ->
       let dir = dir ^ "/" ^ item in
       Unix.mkdir dir 0o777;
@@ -70,8 +71,15 @@ let%expect_test "libraries sorting" =
     in
     (* How many sexps did we just parse here? *)
     print_s [%sexp { num_sexps = (List.length sexps : int) }];
-    [%expect {| ((num_sexps 1)) |}]
+    [%expect {| ((num_sexps 1)) |}];
+    let original_sexps = Sexps_rewriter.original_sexps sexps_rewriter in
+    print_s [%sexp { num_sexps = (List.length original_sexps : int) }];
+    [%expect {| ((num_sexps 1)) |}];
+    require [%here] (phys_equal original_sexps sexps);
+    [%expect {||}]
   in
+  print_endline (Sexps_rewriter.path sexps_rewriter |> Fpath.to_string);
+  [%expect {| path/lib/dune |}];
   (* If we do nothing, the output shall be equal to that with which we started. *)
   require_equal
     [%here]
@@ -79,6 +87,13 @@ let%expect_test "libraries sorting" =
     original_contents
     (Sexps_rewriter.contents sexps_rewriter);
   [%expect {||}];
+  let () =
+    match Sexps_rewriter.contents_result sexps_rewriter with
+    | Error _ -> assert false
+    | Ok contents ->
+      require_equal [%here] (module String) original_contents contents;
+      [%expect {||}]
+  in
   let print_diff () =
     let modified_contents = Sexps_rewriter.contents sexps_rewriter in
     Expect_test_patdiff.print_patdiff original_contents modified_contents ~context:3
@@ -176,6 +191,7 @@ let%expect_test "libraries sorting" =
     match sexp with
     | List (Atom "libraries" :: libraries) ->
       List.iter libraries ~f:(function
+        | List _ -> assert false
         | Atom ("sexps_rewriter" as library_name) as sexp ->
           let loc = Sexps_rewriter.loc sexps_rewriter sexp in
           Err.warning
@@ -184,7 +200,7 @@ let%expect_test "libraries sorting" =
             ; Pp.textf "How awesome is that?"
             ]
             ~hints:[ Pp.verbatim "Keep up the good work." ]
-        | Atom _ | List _ -> ());
+        | Atom _ -> ());
       Skip
     | _ -> Continue);
   ();
@@ -238,5 +254,119 @@ let%expect_test "syntax-error" =
     Error: unclosed parentheses at end of input
     [123]
     |}];
+  ()
+;;
+
+let%expect_test "invalid positions" =
+  Err.For_test.wrap
+  @@ fun () ->
+  let path = Fpath.v "path/lib/hello-world" in
+  let original_contents = "(Hello World)" in
+  let sexps_rewriter =
+    match Sexps_rewriter.create ~path ~original_contents with
+    | Ok t -> t
+    | Error { loc = _; message = _ } -> assert false
+  in
+  require_does_raise [%here] (fun () ->
+    Sexps_rewriter.position sexps_rewriter (List [ Atom "foo" ]));
+  [%expect
+    {|
+    (Sexps_rewriter.Position_not_found
+      (((line 1) (col 0)  (offset 0))
+       ((line 1) (col 1)  (offset 1))
+       ((line 1) (col 5)  (offset 5))
+       ((line 1) (col 7)  (offset 7))
+       ((line 1) (col 11) (offset 11))
+       ((line 1) (col 12) (offset 12)))
+      (foo))
+    |}];
+  ()
+;;
+
+let%expect_test "empty" =
+  Err.For_test.wrap
+  @@ fun () ->
+  let path = Fpath.v "path/lib/empty" in
+  let original_contents = "" in
+  let sexps_rewriter =
+    match Sexps_rewriter.create ~path ~original_contents with
+    | Ok t -> t
+    | Error { loc = _; message = _ } -> assert false
+  in
+  Sexps_rewriter.visit sexps_rewriter ~f:(fun _ ~range:_ ~file_rewriter:_ ->
+    (assert false [@coverage off]));
+  print_endline (Sexps_rewriter.contents sexps_rewriter);
+  [%expect {||}];
+  ()
+;;
+
+let%expect_test "atom" =
+  Err.For_test.wrap
+  @@ fun () ->
+  let path = Fpath.v "path/lib/atom" in
+  let original_contents = "Hello" in
+  let sexps_rewriter =
+    match Sexps_rewriter.create ~path ~original_contents with
+    | Ok t -> t
+    | Error { loc = _; message = _ } -> assert false
+  in
+  Sexps_rewriter.visit sexps_rewriter ~f:(fun sexp ~range:_ ~file_rewriter:_ ->
+    match sexp with
+    | Atom _ ->
+      Err.warning
+        ~loc:(Sexps_rewriter.loc sexps_rewriter sexp)
+        [ Pp.text "This is an atom." ];
+      Break
+    | _ -> assert false);
+  print_endline (Sexps_rewriter.contents sexps_rewriter);
+  [%expect
+    {|
+    Hello
+    File "path/lib/atom", line 1, characters 0-5:
+    Warning: This is an atom.
+    |}];
+  ()
+;;
+
+let%expect_test "reset" =
+  Err.For_test.wrap
+  @@ fun () ->
+  let path = Fpath.v "path/lib/atom" in
+  let original_contents = "Hello World" in
+  let sexps_rewriter =
+    match Sexps_rewriter.create ~path ~original_contents with
+    | Ok t -> t
+    | Error { loc = _; message = _ } -> assert false
+  in
+  (* Here we check that we can call [visit] and [contents] multiple times, as
+     long as rewrites are valid. *)
+  Sexps_rewriter.visit sexps_rewriter ~f:(fun sexp ~range ~file_rewriter ->
+    match sexp with
+    | Atom "World" ->
+      File_rewriter.replace file_rewriter ~range ~text:"You";
+      Break
+    | _ -> Continue);
+  print_endline (Sexps_rewriter.contents sexps_rewriter);
+  [%expect {| Hello You |}];
+  Sexps_rewriter.visit sexps_rewriter ~f:(fun sexp ~range ~file_rewriter ->
+    match sexp with
+    | Atom "Hello" ->
+      File_rewriter.replace file_rewriter ~range ~text:"Hi";
+      Continue
+    | _ -> Continue);
+  print_endline (Sexps_rewriter.contents sexps_rewriter);
+  [%expect {| Hi You |}];
+  (* Checking that we can [reset] the rewrite and start fresh. *)
+  Sexps_rewriter.reset sexps_rewriter;
+  print_endline (Sexps_rewriter.contents sexps_rewriter);
+  [%expect {| Hello World |}];
+  Sexps_rewriter.visit sexps_rewriter ~f:(fun sexp ~range ~file_rewriter ->
+    match sexp with
+    | Atom "World" ->
+      File_rewriter.replace file_rewriter ~range ~text:"Me";
+      Break
+    | _ -> Continue);
+  print_endline (Sexps_rewriter.contents sexps_rewriter);
+  [%expect {| Hello Me |}];
   ()
 ;;
