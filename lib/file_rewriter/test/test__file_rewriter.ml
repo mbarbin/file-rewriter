@@ -159,6 +159,34 @@ let%expect_test "replace" =
   ()
 ;;
 
+let%expect_test "invalid replaces" =
+  let file_rewriter = File_rewriter.create ~path:(Fpath.v "foo.txt") ~original_contents in
+  let out_of_bound = String.length original_contents + 1 in
+  (* Invalid replace requests raises [Invalid_argument]. *)
+  require_does_raise [%here] (fun () ->
+    File_rewriter.replace file_rewriter ~range:{ start = -1; stop = 0 } ~text:"Text");
+  [%expect {| (Invalid_argument File_rewriter.replace) |}];
+  require_does_raise [%here] (fun () ->
+    File_rewriter.replace
+      file_rewriter
+      ~range:{ start = out_of_bound; stop = out_of_bound + 1 }
+      ~text:"Text");
+  [%expect {| (Invalid_argument File_rewriter.replace) |}];
+  require_does_raise [%here] (fun () ->
+    File_rewriter.replace file_rewriter ~range:{ start = 0; stop = -1 } ~text:"Text");
+  [%expect {| (Invalid_argument File_rewriter.replace) |}];
+  require_does_raise [%here] (fun () ->
+    File_rewriter.replace
+      file_rewriter
+      ~range:{ start = 0; stop = out_of_bound }
+      ~text:"Text");
+  [%expect {| (Invalid_argument File_rewriter.replace) |}];
+  require_does_raise [%here] (fun () ->
+    File_rewriter.replace file_rewriter ~range:{ start = 1; stop = 0 } ~text:"Text");
+  [%expect {| (Invalid_argument File_rewriter.replace) |}];
+  ()
+;;
+
 let%expect_test "invalid rewrites" =
   let file_rewriter = File_rewriter.create ~path ~original_contents in
   let reset () = File_rewriter.reset file_rewriter in
@@ -242,6 +270,18 @@ let%expect_test "invalid rewrites" =
       ((start 0) (stop 5) (replace_by Hi))
       ((start 3) (stop 8) (replace_by Universe)))
     |}];
+  (* More coverage cases with 3 rewrites. *)
+  reset ();
+  File_rewriter.replace file_rewriter ~range:{ start = 0; stop = 2 } ~text:"Hi";
+  File_rewriter.replace file_rewriter ~range:{ start = 1; stop = 3 } ~text:"Hi";
+  File_rewriter.replace file_rewriter ~range:{ start = 3; stop = 5 } ~text:"Hi";
+  require_does_raise [%here] (fun () -> test ());
+  [%expect
+    {|
+    (File_rewriter.Invalid_rewrites foo.txt
+      ((start 0) (stop 2) (replace_by Hi))
+      ((start 1) (stop 3) (replace_by Hi)))
+    |}];
   ()
 ;;
 
@@ -274,10 +314,9 @@ let%expect_test "contents_result" =
   in
   [%expect
     {|
-    ((path foo.txt)
-     (rewrites_with_overlap (
-       ((start 2) (stop 11) (replace_by You!))
-       ((start 3) (stop 3)  (replace_by "Big ")))))
+    (foo.txt
+      ((start 2) (stop 11) (replace_by You!))
+      ((start 3) (stop 3)  (replace_by "Big ")))
     |}];
   ()
 ;;

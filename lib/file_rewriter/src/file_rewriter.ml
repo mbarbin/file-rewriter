@@ -21,19 +21,20 @@ type range = Loc.Range.t =
   ; stop : offset
   }
 
-type fpath = Fpath.t
-
-let sexp_of_fpath fpath = Sexplib0.Sexp.Atom (Fpath.to_string fpath)
-
 module Rewrite = struct
-  open Sexplib0.Sexp_conv
-
   type t =
     { start : int
     ; stop : int
     ; replace_by : string
     }
-  [@@deriving sexp_of]
+
+  let sexp_of_t { start; stop; replace_by } =
+    Sexplib0.Sexp.List
+      [ List [ Atom "start"; Sexplib0.Sexp_conv.sexp_of_int start ]
+      ; List [ Atom "stop"; Sexplib0.Sexp_conv.sexp_of_int stop ]
+      ; List [ Atom "replace_by"; Atom replace_by ]
+      ]
+  ;;
 
   let compare (t1 : t) (t2 : t) =
     let r = Int.compare t1.start t2.start in
@@ -52,56 +53,55 @@ let reset ({ path = _; original_contents = _; rewrites = _ } as t) = t.rewrites 
 
 let insert t ~offset ~text =
   let length = String.length t.original_contents in
-  if offset < 0 || offset > length then invalid_arg "File_rewriter.insert";
+  if offset < 0 || offset > length then raise (Invalid_argument "File_rewriter.insert");
   t.rewrites <- { Rewrite.start = offset; stop = offset; replace_by = text } :: t.rewrites
 ;;
 
 let replace t ~range:{ start; stop } ~text =
   let length = String.length t.original_contents in
   if start < 0 || start > length || stop < 0 || stop > length || start > stop
-  then invalid_arg "File_rewriter.replace";
+  then raise (Invalid_argument "File_rewriter.replace");
   t.rewrites <- { Rewrite.start; stop; replace_by = text } :: t.rewrites
 ;;
 
 let remove t ~range = replace t ~range ~text:""
 
 module Invalid_rewrites = struct
-  open Sexplib0.Sexp_conv
-
   type t =
-    { path : fpath
+    { path : Fpath.t
     ; rewrites_with_overlap : Rewrite.t list
     }
-  [@@deriving sexp_of]
+
+  let to_sexps { path; rewrites_with_overlap } =
+    Sexplib0.Sexp.Atom (path |> Fpath.to_string)
+    :: List.map Rewrite.sexp_of_t rewrites_with_overlap
+  ;;
+
+  let sexp_of_t t = Sexplib0.Sexp.List (to_sexps t)
 end
 
 exception Invalid_rewrites of Invalid_rewrites.t
 
 let () =
   Sexplib0.Sexp_conv.Exn_converter.add [%extension_constructor Invalid_rewrites] (function
-    | Invalid_rewrites { path; rewrites_with_overlap } ->
-      List
-        (Atom "File_rewriter.Invalid_rewrites"
-         :: Atom (path |> Fpath.to_string)
-         :: List.map Rewrite.sexp_of_t rewrites_with_overlap)
+    | Invalid_rewrites t ->
+      List (Atom "File_rewriter.Invalid_rewrites" :: Invalid_rewrites.to_sexps t)
     | _ -> assert false)
 ;;
 
-let rewrites_with_overlap rewrites =
-  let[@tail_mod_cons] rec aux current_offset = function
-    | [] -> []
-    | [ ({ Rewrite.start; stop = _; replace_by = _ } as rewrite) ] ->
-      if current_offset > start then [ rewrite ] else []
-    | a :: (b :: _ as tl) ->
-      let include_a = current_offset > a.start || a.stop > b.start in
-      if include_a then a :: aux a.stop tl else aux a.stop tl
-  in
-  aux 0 rewrites
+let[@tail_mod_cons] rec rewrites_with_overlap current_offset = function
+  | [] -> []
+  | [ ({ Rewrite.start; stop = _; replace_by = _ } as rewrite) ] ->
+    if current_offset > start then [ rewrite ] else []
+  | a :: (b :: _ as tl) ->
+    if current_offset > a.start || a.stop > b.start
+    then a :: rewrites_with_overlap a.stop tl
+    else rewrites_with_overlap a.stop tl
 ;;
 
 let sorted_rewrites t =
   let rewrites = t.rewrites |> List.rev |> List.stable_sort Rewrite.compare in
-  match rewrites_with_overlap rewrites with
+  match rewrites_with_overlap 0 rewrites with
   | [] -> rewrites
   | _ :: _ as rewrites_with_overlap ->
     raise (Invalid_rewrites { path = t.path; rewrites_with_overlap })

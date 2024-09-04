@@ -21,33 +21,10 @@
  (depends
   (ocaml
    (>= 5.2))
-  (ocamlformat
-   (and
-    :with-dev-setup
-    (= 0.26.2)))
-  (bisect_ppx
-   (and
-    :with-dev-setup
-    (>= 2.8.3)))
   (fpath
    (>= 0.7.3))
   (loc
    (>= 0.2.0))
-  (ppx_js_style
-   (and
-    :with-dev-setup
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_sexp_conv
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppxlib
-   (>= 0.33))
   (sexplib0
    (and
     (>= v0.17)
@@ -59,14 +36,6 @@
  (depends
   (ocaml
    (>= 5.2))
-  (ocamlformat
-   (and
-    :with-dev-setup
-    (= 0.26.2)))
-  (bisect_ppx
-   (and
-    :with-dev-setup
-    (>= 2.8.3)))
   (file-rewriter
    (= :version))
   (fpath
@@ -77,21 +46,6 @@
    (and
     (>= v0.17)
     (< v0.18)))
-  (ppx_js_style
-   (and
-    :with-dev-setup
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_sexp_conv
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppxlib
-   (>= 0.33))
   (sexplib0
    (and
     (>= v0.17)
