@@ -70,7 +70,7 @@
     :with-dev-setup
     (>= 2.8.3)))
   (err
-   (>= 0.0.3))
+   (>= 0.0.4))
   (expect_test_helpers_core
    (and
     (>= v0.17)

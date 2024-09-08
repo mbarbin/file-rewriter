@@ -54,9 +54,10 @@ val insert : t -> offset:offset -> text:string -> unit
     The range refers to the range in the original contents, not the ongoing
     rewritten buffer. Through the use of this module it is invalid to request
     [replaces] with overlapping ranges, and doing so will cause exception
-    {!exception:E} to be raised during [contents]. Raises [Invalid_argument]
-    if [range] is not a valid range in t's [original_contents], indicating a
-    programming error that needs to be fixed. *)
+    {!exception:Invalid_rewrites} to be raised during [contents]. Raises
+    [Invalid_argument] if [range] is not a valid range in t's
+    [original_contents], indicating a programming error that needs to be
+    fixed. *)
 val replace : t -> range:range -> text:string -> unit
 
 (** This is a small convenient wrapper that is equivalent to replacing a range

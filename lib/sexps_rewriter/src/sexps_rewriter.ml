@@ -42,28 +42,18 @@ let file_rewriter t = t.file_rewriter
 let original_sexps t = t.original_sexps
 
 module Position = struct
-  let loc_original_contents ~path ~original_contents (range : Parsexp.Positions.range) =
-    let source_code_position ({ line; col = _; offset } : Parsexp.Positions.pos) =
-      let pos_bol =
-        let rec aux pos =
-          if pos < 0 || Char.equal original_contents.[pos] '\n'
-          then pos + 1
-          else aux (pos - 1)
-        in
-        aux (Int.pred offset)
-      in
+  let loc_of_parsexp_range ~path (range : Parsexp.Positions.range) =
+    let source_code_position ({ line; col; offset } : Parsexp.Positions.pos) =
       { Lexing.pos_fname = path |> Fpath.to_string
       ; pos_lnum = line
       ; pos_cnum = offset
-      ; pos_bol
+      ; pos_bol = offset - col
       }
     in
     Loc.create (source_code_position range.start_pos, source_code_position range.end_pos)
   ;;
 
-  let loc t range =
-    loc_original_contents ~path:t.path ~original_contents:t.original_contents range
-  ;;
+  let loc t range = loc_of_parsexp_range ~path:t.path range
 
   let range (range : Parsexp.Positions.range) =
     { Loc.Range.start = range.start_pos.offset; stop = range.end_pos.offset }
@@ -149,10 +139,7 @@ let create ~path ~original_contents =
     let position = Parsexp.Parse_error.position parse_error in
     let message = Parsexp.Parse_error.message parse_error in
     let loc =
-      Position.loc_original_contents
-        ~path
-        ~original_contents
-        { start_pos = position; end_pos = position }
+      Position.loc_of_parsexp_range ~path { start_pos = position; end_pos = position }
     in
     Error { Parse_error.loc; message }
 ;;
