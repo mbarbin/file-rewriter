@@ -48,6 +48,8 @@ type t =
   ; mutable rewrites : Rewrite.t list (* New elements added to the front. *)
   }
 
+let path t = t.path
+let original_contents t = t.original_contents
 let create ~path ~original_contents = { path; original_contents; rewrites = [] }
 let reset ({ path = _; original_contents = _; rewrites = _ } as t) = t.rewrites <- []
 

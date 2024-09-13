@@ -92,3 +92,11 @@ val contents : t -> string
 (** Same as {!val:contents} but wraps the output into a result type rather than
     raising an exception. *)
 val contents_result : t -> (string, Invalid_rewrites.t) Result.t
+
+(** {1 Getters} *)
+
+(** Returns the path that was supplied to [create]. *)
+val path : t -> Fpath.t
+
+(** Returns the original contents that was supplied to [create]. *)
+val original_contents : t -> string

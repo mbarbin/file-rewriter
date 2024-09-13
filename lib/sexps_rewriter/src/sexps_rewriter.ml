@@ -15,27 +15,17 @@
 (******************************************************************************)
 
 type t =
-  { path : Fpath.t
-  ; original_contents : string
-  ; original_sexps : Sexp.t list
+  { original_sexps : Sexp.t list
   ; positions : Parsexp.Positions.t
   ; file_rewriter : File_rewriter.t
   ; parser_result : Parsexp.Many_and_positions.parsed_value
   }
 
-let reset
-  { path = _
-  ; original_contents = _
-  ; original_sexps = _
-  ; positions = _
-  ; file_rewriter
-  ; parser_result = _
-  }
-  =
+let reset { original_sexps = _; positions = _; file_rewriter; parser_result = _ } =
   File_rewriter.reset file_rewriter
 ;;
 
-let path t = t.path
+let path t = File_rewriter.path t.file_rewriter
 let contents t = File_rewriter.contents t.file_rewriter
 let contents_result t = File_rewriter.contents_result t.file_rewriter
 let file_rewriter t = t.file_rewriter
@@ -53,7 +43,7 @@ module Position = struct
     Loc.create (source_code_position range.start_pos, source_code_position range.end_pos)
   ;;
 
-  let loc t range = loc_of_parsexp_range ~path:t.path range
+  let loc t range = loc_of_parsexp_range ~path:(File_rewriter.path t.file_rewriter) range
 
   let range (range : Parsexp.Positions.range) =
     { Loc.Range.start = range.start_pos.offset; stop = range.end_pos.offset }
@@ -128,9 +118,7 @@ let create ~path ~original_contents =
   match Parsexp.Many_and_positions.parse_string original_contents with
   | Ok ((original_sexps, positions) as parser_result) ->
     Ok
-      { path
-      ; original_contents
-      ; original_sexps
+      { original_sexps
       ; positions
       ; file_rewriter = File_rewriter.create ~path ~original_contents
       ; parser_result
