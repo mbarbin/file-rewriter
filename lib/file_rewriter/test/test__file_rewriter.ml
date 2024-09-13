@@ -23,8 +23,16 @@ Hello Newline
 
 let%expect_test "insert" =
   let file_rewriter = File_rewriter.create ~path:(Fpath.v "foo.txt") ~original_contents in
+  print_endline (File_rewriter.path file_rewriter |> Fpath.to_string);
+  [%expect {| foo.txt |}];
   let reset () = File_rewriter.reset file_rewriter in
   let test () = print_endline (File_rewriter.contents file_rewriter) in
+  (* The original contents may be accessed. *)
+  require_equal
+    [%here]
+    (module String)
+    original_contents
+    (File_rewriter.original_contents file_rewriter);
   (* Applying no substitution shall return the original contents. *)
   require_equal
     [%here]
