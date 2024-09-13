@@ -80,6 +80,9 @@ let%expect_test "libraries sorting" =
   in
   print_endline (Sexps_rewriter.path sexps_rewriter |> Fpath.to_string);
   [%expect {| path/lib/dune |}];
+  print_endline
+    (Sexps_rewriter.file_rewriter sexps_rewriter |> File_rewriter.path |> Fpath.to_string);
+  [%expect {| path/lib/dune |}];
   (* If we do nothing, the output shall be equal to that with which we started. *)
   require_equal
     [%here]
@@ -325,6 +328,34 @@ let%expect_test "atom" =
     File "path/lib/atom", line 1, characters 0-5:
     Warning: This is an atom.
     |}];
+  ()
+;;
+
+let%expect_test "insert" =
+  Err.For_test.wrap
+  @@ fun () ->
+  let path = Fpath.v "path/lib/hello-world" in
+  let original_contents = "(Hello World)" in
+  let sexps_rewriter =
+    match Sexps_rewriter.create ~path ~original_contents with
+    | Ok t -> t
+    | Error { loc = _; message = _ } -> assert false
+  in
+  Sexps_rewriter.visit sexps_rewriter ~f:(fun sexp ~range:_ ~file_rewriter ->
+    match sexp with
+    | Atom "World" ->
+      File_rewriter.insert
+        file_rewriter
+        ~offset:(Sexps_rewriter.start_offset sexps_rewriter sexp)
+        ~text:"Big ";
+      File_rewriter.insert
+        file_rewriter
+        ~offset:(Sexps_rewriter.stop_offset sexps_rewriter sexp)
+        ~text:" !!";
+      Continue
+    | _ -> Continue);
+  print_endline (Sexps_rewriter.contents sexps_rewriter);
+  [%expect {| (Hello Big World !!) |}];
   ()
 ;;
 
