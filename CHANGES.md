@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Upgrade to `cmdlang.0.0.5`.
 - Remove fields from `sexps_rewriters` that are duplicated from `t.file_rewriter` (refactor).
 
 ### Deprecated
