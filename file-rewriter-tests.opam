@@ -13,13 +13,13 @@ depends: [
   "ocamlformat" {with-dev-setup & = "0.26.2"}
   "base" {>= "v0.17" & < "v0.18"}
   "bisect_ppx" {with-dev-setup & >= "2.8.3"}
-  "err" {>= "0.0.5"}
   "expect_test_helpers_core" {>= "v0.17" & < "v0.18"}
   "file-rewriter" {= version}
   "fpath" {>= "0.7.3"}
   "loc" {>= "0.2.0"}
   "parsexp" {>= "v0.17" & < "v0.18"}
   "patdiff" {>= "v0.17" & < "v0.18"}
+  "pp-log" {>= "0.0.1"}
   "ppx_compare" {>= "v0.17" & < "v0.18"}
   "ppx_enumerate" {>= "v0.17" & < "v0.18"}
   "ppx_expect" {>= "v0.17" & < "v0.18"}

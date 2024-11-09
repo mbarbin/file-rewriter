@@ -13,12 +13,12 @@
   Expect_test_helpers_base)
  (libraries
   base
-  pp-log.err
   expect_test_helpers_core.expect_test_helpers_base
   file-rewriter
   fpath
   parsexp
   patdiff.expect_test_patdiff
+  pp-log.err
   sexps_rewriter
   unix)
  (inline_tests)
