@@ -15,6 +15,8 @@
 
 (documentation "https://mbarbin.github.io/file-rewriter/")
 
+(implicit_transitive_deps false)
+
 (package
  (name file-rewriter)
  (synopsis "Apply small rewrites to tweak or refactor your files")
