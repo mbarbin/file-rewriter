@@ -30,3 +30,18 @@ build: [
   ]
 ]
 dev-repo: "git+https://github.com/mbarbin/file-rewriter.git"
+description: """\
+
+File_rewriter is an OCaml library for applying small rewrites to tweak
+or refactor your files.
+
+It provides a convenient interface to apply surgical textual
+substitutions on the fly, while navigating the contents of a file
+through an abstract representation containing code locations.
+
+It can be a great fit for applying systematic codemods to a large
+codebase.
+
+"""
+tags: [ "codemods" "refactoring" ]
+x-maintenance-intent: [ "(latest)" ]
