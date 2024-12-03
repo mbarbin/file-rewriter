@@ -119,10 +119,10 @@ let contents t =
   let final_offset =
     List.fold_left
       (fun current_offset { Rewrite.start; stop; replace_by } ->
-        if current_offset < start
-        then insert_original_contents ~from:current_offset ~up_to:start;
-        Buffer.add_string buffer replace_by;
-        stop)
+         if current_offset < start
+         then insert_original_contents ~from:current_offset ~up_to:start;
+         Buffer.add_string buffer replace_by;
+         stop)
       0
       rewrites
   in

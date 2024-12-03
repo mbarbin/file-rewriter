@@ -16,10 +16,13 @@
 
 let path = Fpath.v "foo.txt"
 
-let original_contents = {|
+let original_contents =
+  {|
 Hello World
 Hello Newline
-|} |> String.strip
+|}
+  |> String.strip
+;;
 
 let%expect_test "insert" =
   let file_rewriter = File_rewriter.create ~path:(Fpath.v "foo.txt") ~original_contents in
@@ -41,7 +44,8 @@ let%expect_test "insert" =
     (File_rewriter.contents file_rewriter);
   [%expect {||}];
   test ();
-  [%expect {|
+  [%expect
+    {|
     Hello World
     Hello Newline |}];
   (* Inserting at invalid offsets raises [Invalid_argument]. *)
@@ -57,7 +61,8 @@ let%expect_test "insert" =
   (* We shall be able to apply a subst from the very beginning. *)
   File_rewriter.insert file_rewriter ~offset:0 ~text:"Prefix\n";
   test ();
-  [%expect {|
+  [%expect
+    {|
     Prefix
     Hello World
     Hello Newline |}];
@@ -65,7 +70,8 @@ let%expect_test "insert" =
   reset ();
   File_rewriter.insert file_rewriter ~offset:6 ~text:"Friendly ";
   test ();
-  [%expect {|
+  [%expect
+    {|
     Hello Friendly World
     Hello Newline |}];
   (* It is supported to insert several texts at the same offset. When doing so,
@@ -73,7 +79,8 @@ let%expect_test "insert" =
      are inserted first in left-to-right order. *)
   File_rewriter.insert file_rewriter ~offset:6 ~text:"Awesome ";
   test ();
-  [%expect {|
+  [%expect
+    {|
     Hello Friendly Awesome World
     Hello Newline
     |}];
@@ -108,7 +115,8 @@ let%expect_test "replace" =
     file_rewriter
     ~range:{ start = String.length "Hello"; stop = String.length "Hello World" };
   test ();
-  [%expect {|
+  [%expect
+    {|
     Hello
     Hello Newline
     |}];
@@ -118,7 +126,8 @@ let%expect_test "replace" =
     ~range:{ start = String.length "Hello "; stop = String.length "Hello World" }
     ~text:"You";
   test ();
-  [%expect {|
+  [%expect
+    {|
     Hello You
     Hello Newline
     |}];
@@ -126,7 +135,8 @@ let%expect_test "replace" =
      are going to be placed first. *)
   File_rewriter.insert file_rewriter ~offset:6 ~text:"Awesome ";
   test ();
-  [%expect {|
+  [%expect
+    {|
     Hello Awesome You
     Hello Newline
     |}];
@@ -138,7 +148,8 @@ let%expect_test "replace" =
     ~range:{ start = String.length "Hello "; stop = String.length "Hello World" }
     ~text:"You";
   test ();
-  [%expect {|
+  [%expect
+    {|
     Hello Awesome You
     Hello Newline
     |}];
@@ -150,7 +161,8 @@ let%expect_test "replace" =
     ~range:{ start = 0; stop = String.length "Hello World" }
     ~text:"Hi, You!";
   test ();
-  [%expect {|
+  [%expect
+    {|
     Hi, You!
     Hello Newline
     |}];
@@ -208,7 +220,8 @@ let%expect_test "invalid rewrites" =
     ~text:"You!";
   File_rewriter.replace file_rewriter ~range:{ start = 0; stop = 2 } ~text:"Hi, ";
   test ();
-  [%expect {|
+  [%expect
+    {|
     Hi, You!
     Hello Newline
     |}];
@@ -224,7 +237,8 @@ let%expect_test "invalid rewrites" =
     ~range:{ start = 0; stop = String.length "Hello" }
     ~text:"Hi";
   test ();
-  [%expect {|
+  [%expect
+    {|
     Hi World
     Hello Newline
     |}];
@@ -249,7 +263,8 @@ let%expect_test "invalid rewrites" =
     ~text:"Hi";
   File_rewriter.insert file_rewriter ~offset:(String.length "Hello ") ~text:"Big ";
   test ();
-  [%expect {|
+  [%expect
+    {|
     Hi Big World
     Hello Newline
     |}];
@@ -260,7 +275,8 @@ let%expect_test "invalid rewrites" =
     ~range:{ start = 0; stop = String.length "Hello" }
     ~text:"Hi";
   test ();
-  [%expect {|
+  [%expect
+    {|
     Hi World
     Hello Newline
     |}];
@@ -309,7 +325,8 @@ let%expect_test "contents_result" =
     | Ok contents -> print_endline contents
     | Error _ -> assert false
   in
-  [%expect {|
+  [%expect
+    {|
     Hi, You!
     Hello Newline
     |}];

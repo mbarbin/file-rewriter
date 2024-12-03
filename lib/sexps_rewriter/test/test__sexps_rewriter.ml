@@ -23,7 +23,7 @@
 let save_file ~path ~contents =
   let paths = String.split (Fpath.to_string path) ~on:'/' in
   let rec aux dir = function
-    | [] -> assert false [@coverage off]
+    | [] -> (assert false [@coverage off])
     | [ _ ] -> ()
     | item :: (_ :: _ as tl) ->
       let dir = dir ^ "/" ^ item in
