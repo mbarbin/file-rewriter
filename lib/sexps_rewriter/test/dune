@@ -18,6 +18,7 @@
   fpath
   parsexp
   patdiff.expect_test_patdiff
+  pp
   pp-log.err
   sexps_rewriter
   unix)
