@@ -54,6 +54,7 @@ let original_contents =
    (pps ppx_sexp_conv ppx_sexp_value)))
 |}
   |> String.strip
+  |> fun s -> s ^ "\n"
 ;;
 
 let%expect_test "libraries sorting" =
@@ -99,7 +100,9 @@ let%expect_test "libraries sorting" =
   in
   let print_diff () =
     let modified_contents = Sexps_rewriter.contents sexps_rewriter in
-    Expect_test_patdiff.print_patdiff original_contents modified_contents ~context:3
+    let file = Fpath.to_string path in
+    Patch.diff (Edit (file, file)) (Some original_contents) (Some modified_contents)
+    |> Option.iter ~f:(fun diff -> Patch.pp ~git:true Stdlib.Format.std_formatter diff)
   in
   print_diff ();
   [%expect {||}];
@@ -113,14 +116,36 @@ let%expect_test "libraries sorting" =
   print_diff ();
   [%expect
     {|
-    -1,6 +1,6
-      ; Hey this is a comment, which we should preserve !!!
-      (library
-    -|  (name sexps_rewriter_test)
-    +|  (public_name sexps_rewriter_test)
-        (flags -w +a-4-40-42-44-66 -warn-error +a)
-        (libraries
-         expect_test_helpers_core
+    diff --git path/lib/dune path/lib/dune
+    --- path/lib/dune
+    +++ path/lib/dune
+    @@ -2,13 +2,13 @@
+    -  (name sexps_rewriter_test)
+    -  (flags -w +a-4-40-42-44-66 -warn-error +a)
+    -  (libraries
+    -   expect_test_helpers_core
+    -   base
+    -   sexps_rewriter
+    -   file_rewriter
+    -   parsexp)
+    -  ; This is another comment.
+    -  (inline_tests)
+    -  (lint (pps ppx_js_style -check-doc-comments))
+    -  (preprocess
+    -   (pps ppx_sexp_conv ppx_sexp_value)))
+    +  (public_name sexps_rewriter_test)
+    +  (flags -w +a-4-40-42-44-66 -warn-error +a)
+    +  (libraries
+    +   expect_test_helpers_core
+    +   base
+    +   sexps_rewriter
+    +   file_rewriter
+    +   parsexp)
+    +  ; This is another comment.
+    +  (inline_tests)
+    +  (lint (pps ppx_js_style -check-doc-comments))
+    +  (preprocess
+    +   (pps ppx_sexp_conv ppx_sexp_value)))
     |}];
   (* Here, we reorder the libraries alphabetically. We are doing that by adding
      a substitution for all of the library names, one by one. There might be
@@ -144,25 +169,36 @@ let%expect_test "libraries sorting" =
   print_diff ();
   [%expect
     {|
-    -1,13 +1,13
-      ; Hey this is a comment, which we should preserve !!!
-      (library
-    -|  (name sexps_rewriter_test)
-    +|  (public_name sexps_rewriter_test)
-        (flags -w +a-4-40-42-44-66 -warn-error +a)
-        (libraries
-    +|   base
-         expect_test_helpers_core
-    -|   base
-    -|   sexps_rewriter
-    -|   file_rewriter
-    -|   parsexp)
-    +|   file_rewriter
-    +|   parsexp
-    +|   sexps_rewriter)
-        ; This is another comment.
-        (inline_tests)
-        (lint (pps ppx_js_style -check-doc-comments))
+    diff --git path/lib/dune path/lib/dune
+    --- path/lib/dune
+    +++ path/lib/dune
+    @@ -2,13 +2,13 @@
+    -  (name sexps_rewriter_test)
+    -  (flags -w +a-4-40-42-44-66 -warn-error +a)
+    -  (libraries
+    -   expect_test_helpers_core
+    -   base
+    -   sexps_rewriter
+    -   file_rewriter
+    -   parsexp)
+    -  ; This is another comment.
+    -  (inline_tests)
+    -  (lint (pps ppx_js_style -check-doc-comments))
+    -  (preprocess
+    -   (pps ppx_sexp_conv ppx_sexp_value)))
+    +  (public_name sexps_rewriter_test)
+    +  (flags -w +a-4-40-42-44-66 -warn-error +a)
+    +  (libraries
+    +   base
+    +   expect_test_helpers_core
+    +   file_rewriter
+    +   parsexp
+    +   sexps_rewriter)
+    +  ; This is another comment.
+    +  (inline_tests)
+    +  (lint (pps ppx_js_style -check-doc-comments))
+    +  (preprocess
+    +   (pps ppx_sexp_conv ppx_sexp_value)))
     |}];
   (* Let's show the end result. *)
   print_endline (Sexps_rewriter.contents sexps_rewriter);
