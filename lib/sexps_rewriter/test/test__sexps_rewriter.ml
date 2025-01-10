@@ -100,8 +100,7 @@ let%expect_test "libraries sorting" =
   in
   let print_diff () =
     let modified_contents = Sexps_rewriter.contents sexps_rewriter in
-    let diffs = Odiff.strings_diffs original_contents modified_contents in
-    Odiff.print_diffs Out_channel.stdout diffs
+    Expect_test_patdiff.print_patdiff original_contents modified_contents ~context:3
   in
   print_diff ();
   [%expect {||}];
@@ -115,10 +114,14 @@ let%expect_test "libraries sorting" =
   print_diff ();
   [%expect
     {|
-    3c3
-    <   (name sexps_rewriter_test)
-    ---
-    >   (public_name sexps_rewriter_test)
+    -1,6 +1,6
+      ; Hey this is a comment, which we should preserve !!!
+      (library
+    -|  (name sexps_rewriter_test)
+    +|  (public_name sexps_rewriter_test)
+        (flags -w +a-4-40-42-44-66 -warn-error +a)
+        (libraries
+         expect_test_helpers_core
     |}];
   (* Here, we reorder the libraries alphabetically. We are doing that by adding
      a substitution for all of the library names, one by one. There might be
@@ -142,21 +145,25 @@ let%expect_test "libraries sorting" =
   print_diff ();
   [%expect
     {|
-    3c3
-    <   (name sexps_rewriter_test)
-    ---
-    >   (public_name sexps_rewriter_test)
-    6d5
-    <    expect_test_helpers_core
-    8c7
-    <    sexps_rewriter
-    ---
-    >    expect_test_helpers_core
-    10c9,10
-    <    parsexp)
-    ---
-    >    parsexp
-    >    sexps_rewriter)
+    -1,13 +1,13
+      ; Hey this is a comment, which we should preserve !!!
+      (library
+    -|  (name sexps_rewriter_test)
+    +|  (public_name sexps_rewriter_test)
+        (flags -w +a-4-40-42-44-66 -warn-error +a)
+        (libraries
+    +|   base
+         expect_test_helpers_core
+    -|   base
+    -|   sexps_rewriter
+    -|   file_rewriter
+    -|   parsexp)
+    +|   file_rewriter
+    +|   parsexp
+    +|   sexps_rewriter)
+        ; This is another comment.
+        (inline_tests)
+        (lint (pps ppx_js_style -check-doc-comments))
     |}];
   (* Let's show the end result. *)
   print_endline (Sexps_rewriter.contents sexps_rewriter);
