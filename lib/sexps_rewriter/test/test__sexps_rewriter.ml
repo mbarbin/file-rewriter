@@ -100,9 +100,8 @@ let%expect_test "libraries sorting" =
   in
   let print_diff () =
     let modified_contents = Sexps_rewriter.contents sexps_rewriter in
-    let file = Fpath.to_string path in
-    Patch.diff (Edit (file, file)) (Some original_contents) (Some modified_contents)
-    |> Option.iter ~f:(fun diff -> Patch.pp ~git:true Stdlib.Format.std_formatter diff)
+    let diffs = Odiff.strings_diffs original_contents modified_contents in
+    Odiff.print_diffs Out_channel.stdout diffs
   in
   print_diff ();
   [%expect {||}];
@@ -116,36 +115,10 @@ let%expect_test "libraries sorting" =
   print_diff ();
   [%expect
     {|
-    diff --git path/lib/dune path/lib/dune
-    --- path/lib/dune
-    +++ path/lib/dune
-    @@ -2,13 +2,13 @@
-    -  (name sexps_rewriter_test)
-    -  (flags -w +a-4-40-42-44-66 -warn-error +a)
-    -  (libraries
-    -   expect_test_helpers_core
-    -   base
-    -   sexps_rewriter
-    -   file_rewriter
-    -   parsexp)
-    -  ; This is another comment.
-    -  (inline_tests)
-    -  (lint (pps ppx_js_style -check-doc-comments))
-    -  (preprocess
-    -   (pps ppx_sexp_conv ppx_sexp_value)))
-    +  (public_name sexps_rewriter_test)
-    +  (flags -w +a-4-40-42-44-66 -warn-error +a)
-    +  (libraries
-    +   expect_test_helpers_core
-    +   base
-    +   sexps_rewriter
-    +   file_rewriter
-    +   parsexp)
-    +  ; This is another comment.
-    +  (inline_tests)
-    +  (lint (pps ppx_js_style -check-doc-comments))
-    +  (preprocess
-    +   (pps ppx_sexp_conv ppx_sexp_value)))
+    3c3
+    <   (name sexps_rewriter_test)
+    ---
+    >   (public_name sexps_rewriter_test)
     |}];
   (* Here, we reorder the libraries alphabetically. We are doing that by adding
      a substitution for all of the library names, one by one. There might be
@@ -169,36 +142,21 @@ let%expect_test "libraries sorting" =
   print_diff ();
   [%expect
     {|
-    diff --git path/lib/dune path/lib/dune
-    --- path/lib/dune
-    +++ path/lib/dune
-    @@ -2,13 +2,13 @@
-    -  (name sexps_rewriter_test)
-    -  (flags -w +a-4-40-42-44-66 -warn-error +a)
-    -  (libraries
-    -   expect_test_helpers_core
-    -   base
-    -   sexps_rewriter
-    -   file_rewriter
-    -   parsexp)
-    -  ; This is another comment.
-    -  (inline_tests)
-    -  (lint (pps ppx_js_style -check-doc-comments))
-    -  (preprocess
-    -   (pps ppx_sexp_conv ppx_sexp_value)))
-    +  (public_name sexps_rewriter_test)
-    +  (flags -w +a-4-40-42-44-66 -warn-error +a)
-    +  (libraries
-    +   base
-    +   expect_test_helpers_core
-    +   file_rewriter
-    +   parsexp
-    +   sexps_rewriter)
-    +  ; This is another comment.
-    +  (inline_tests)
-    +  (lint (pps ppx_js_style -check-doc-comments))
-    +  (preprocess
-    +   (pps ppx_sexp_conv ppx_sexp_value)))
+    3c3
+    <   (name sexps_rewriter_test)
+    ---
+    >   (public_name sexps_rewriter_test)
+    6d5
+    <    expect_test_helpers_core
+    8c7
+    <    sexps_rewriter
+    ---
+    >    expect_test_helpers_core
+    10c9,10
+    <    parsexp)
+    ---
+    >    parsexp
+    >    sexps_rewriter)
     |}];
   (* Let's show the end result. *)
   print_endline (Sexps_rewriter.contents sexps_rewriter);
