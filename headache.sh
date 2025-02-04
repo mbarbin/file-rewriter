@@ -1,11 +1,11 @@
 #!/bin/bash -e
 
 dirs=(
+    # Add new directories below:
     "lib/file_rewriter/src"
     "lib/file_rewriter/test"
     "lib/sexps_rewriter/src"
     "lib/sexps_rewriter/test"
-    # add more directories here
 )
 
 for dir in "${dirs[@]}"; do
