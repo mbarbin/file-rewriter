@@ -19,7 +19,7 @@
   parsexp
   patdiff.expect_test_patdiff
   pp
-  pp-log.err
+  pplumbing.err
   sexps_rewriter
   unix)
  (inline_tests)
