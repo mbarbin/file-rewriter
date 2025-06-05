@@ -28,9 +28,7 @@
   (loc
    (>= 0.2.2))
   (sexplib0
-   (and
-    (>= v0.17)
-    (< v0.18)))))
+   (>= v0.17))))
 
 (package
  (name sexps-rewriter)
@@ -45,13 +43,9 @@
   (loc
    (>= 0.2.2))
   (parsexp
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (sexplib0
-   (and
-    (>= v0.17)
-    (< v0.18)))))
+   (>= v0.17))))
 
 (package
  (name file-rewriter-tests)
@@ -64,17 +58,13 @@
     :with-dev-setup
     (= 0.27.0)))
   (base
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (bisect_ppx
    (and
     :with-dev-setup
     (>= 2.8.3)))
   (expect_test_helpers_core
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (file-rewriter
    (= :version))
   (fpath
@@ -82,66 +72,41 @@
   (loc
    (>= 0.2.2))
   (parsexp
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (patdiff
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (pp
    (>= 2.0.0))
   (pplumbing
    (>= 0.0.12))
   (ppx_compare
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_enumerate
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_expect
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_hash
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_here
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_js_style
    (and
     :with-dev-setup
-    (>= v0.17)
-    (< v0.18)))
+    (>= v0.17)))
   (ppx_let
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_sexp_conv
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppxlib
    (>= 0.33))
   (sexplib0
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (sexps-rewriter
    (= :version))
   (stdio
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (sherlodoc
    (and
     :with-doc

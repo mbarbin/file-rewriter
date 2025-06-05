@@ -13,8 +13,8 @@ depends: [
   "file-rewriter" {= version}
   "fpath" {>= "0.7.3"}
   "loc" {>= "0.2.2"}
-  "parsexp" {>= "v0.17" & < "v0.18"}
-  "sexplib0" {>= "v0.17" & < "v0.18"}
+  "parsexp" {>= "v0.17"}
+  "sexplib0" {>= "v0.17"}
   "odoc" {with-doc}
 ]
 build: [
