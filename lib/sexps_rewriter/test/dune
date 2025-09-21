@@ -10,6 +10,8 @@
   -open
   Base
   -open
+  Pplumbing_err
+  -open
   Expect_test_helpers_base)
  (libraries
   base
@@ -19,7 +21,7 @@
   parsexp
   patdiff.expect_test_patdiff
   pp
-  pplumbing.err
+  pplumbing-err
   sexps_rewriter
   unix)
  (inline_tests)
