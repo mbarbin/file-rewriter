@@ -77,8 +77,8 @@
    (>= v0.17))
   (pp
    (>= 2.0.0))
-  (pplumbing
-   (>= 0.0.14))
+  (pplumbing-err
+   (>= 0.0.16))
   (ppx_compare
    (>= v0.17))
   (ppx_enumerate
