@@ -1,6 +1,6 @@
 # List of directories for headache.sh
 # Add new directories below. Lines starting with '#' are ignored.
-lib/file_rewriter/src
-lib/file_rewriter/test
-lib/sexps_rewriter/src
-lib/sexps_rewriter/test
+pkg/file-rewriter
+pkg/sexps-rewriter
+test/file-rewriter
+test/sexps-rewriter
