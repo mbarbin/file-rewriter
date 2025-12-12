@@ -1,6 +1,6 @@
 (library
  (name sexps_rewriter_test)
- (public_name file-rewriter-tests.sexps_rewriter_test)
+ (package file-rewriter-tests)
  (flags
   :standard
   -w
