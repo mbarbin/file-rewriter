@@ -76,6 +76,7 @@ val reset : t -> unit
 module Invalid_rewrites : sig
   type t
 
+  val to_dyn : t -> Dyn.t
   val sexp_of_t : t -> Sexplib0.Sexp.t
 end
 

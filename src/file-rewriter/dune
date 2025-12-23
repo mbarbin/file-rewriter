@@ -2,7 +2,7 @@
  (name file_rewriter)
  (public_name file-rewriter)
  (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a)
- (libraries fpath loc sexplib0)
+ (libraries dyn fpath loc sexplib0)
  (instrumentation
   (backend bisect_ppx))
  (lint

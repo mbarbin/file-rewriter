@@ -28,6 +28,14 @@ module Rewrite = struct
     ; replace_by : string
     }
 
+  let to_dyn { start; stop; replace_by } =
+    Dyn.Record
+      [ "start", start |> Dyn.int
+      ; "stop", stop |> Dyn.int
+      ; "replace_by", replace_by |> Dyn.string
+      ]
+  ;;
+
   let sexp_of_t { start; stop; replace_by } =
     Sexplib0.Sexp.List
       [ List [ Atom "start"; Sexplib0.Sexp_conv.sexp_of_int start ]
@@ -73,6 +81,12 @@ module Invalid_rewrites = struct
     { path : Fpath.t
     ; rewrites_with_overlap : Rewrite.t list
     }
+
+  let to_dyn { path; rewrites_with_overlap } =
+    Dyn.Tuple
+      (Dyn.string (path |> Fpath.to_string)
+       :: List.map Rewrite.to_dyn rewrites_with_overlap)
+  ;;
 
   let to_sexps { path; rewrites_with_overlap } =
     Sexplib0.Sexp.Atom (path |> Fpath.to_string)
