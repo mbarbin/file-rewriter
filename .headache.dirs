@@ -4,3 +4,4 @@ src/file-rewriter
 src/sexps-rewriter
 test/file-rewriter
 test/sexps-rewriter
+test/stdlib

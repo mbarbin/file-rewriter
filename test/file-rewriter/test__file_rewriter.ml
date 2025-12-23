@@ -335,13 +335,19 @@ let%expect_test "contents_result" =
     match File_rewriter.contents_result file_rewriter with
     | Ok (_ : string) -> assert false
     | Error invalid_rewrites ->
-      print_s [%sexp (invalid_rewrites : File_rewriter.Invalid_rewrites.t)]
+      print_endline
+        (Sexp.to_string_hum
+           (invalid_rewrites |> File_rewriter.Invalid_rewrites.sexp_of_t));
+      print_dyn (invalid_rewrites |> File_rewriter.Invalid_rewrites.to_dyn);
+      ()
   in
   [%expect
     {|
-    (foo.txt
-      ((start 2) (stop 11) (replace_by You!))
-      ((start 3) (stop 3)  (replace_by "Big ")))
+    (foo.txt ((start 2) (stop 11) (replace_by You!))
+     ((start 3) (stop 3) (replace_by "Big ")))
+    ("foo.txt",
+     { start = 2; stop = 11; replace_by = "You!" },
+     { start = 3; stop = 3; replace_by = "Big " })
     |}];
   ()
 ;;

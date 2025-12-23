@@ -71,12 +71,12 @@ let%expect_test "libraries sorting" =
       Sexps_rewriter.Private.parser_result sexps_rewriter
     in
     (* How many sexps did we just parse here? *)
-    print_s [%sexp { num_sexps = (List.length sexps : int) }];
-    [%expect {| ((num_sexps 1)) |}];
+    print_dyn (Dyn.record [ "num_sexps", List.length sexps |> Dyn.int ]);
+    [%expect {| { num_sexps = 1 } |}];
     let original_sexps = Sexps_rewriter.original_sexps sexps_rewriter in
-    print_s [%sexp { num_sexps = (List.length original_sexps : int) }];
-    [%expect {| ((num_sexps 1)) |}];
-    require [%here] (phys_equal original_sexps sexps);
+    print_dyn (Dyn.record [ "num_sexps", List.length original_sexps |> Dyn.int ]);
+    [%expect {| { num_sexps = 1 } |}];
+    require (phys_equal original_sexps sexps);
     [%expect {||}]
   in
   print_endline (Sexps_rewriter.path sexps_rewriter |> Fpath.to_string);

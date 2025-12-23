@@ -10,12 +10,15 @@
   -open
   Base
   -open
-  Expect_test_helpers_base)
+  Expect_test_helpers_base
+  -open
+  Stdlib_for_test)
  (libraries
   base
   expect_test_helpers_core.expect_test_helpers_base
   file_rewriter
-  fpath)
+  fpath
+  stdlib_for_test)
  (inline_tests)
  (instrumentation
   (backend bisect_ppx))

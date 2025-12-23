@@ -12,7 +12,9 @@
   -open
   Pplumbing_err
   -open
-  Expect_test_helpers_base)
+  Expect_test_helpers_base
+  -open
+  Stdlib_for_test)
  (libraries
   base
   expect_test_helpers_core.expect_test_helpers_base
@@ -23,6 +25,7 @@
   pp
   pplumbing-err
   sexps_rewriter
+  stdlib_for_test
   unix)
  (inline_tests)
  (instrumentation
