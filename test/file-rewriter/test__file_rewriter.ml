@@ -361,8 +361,10 @@ let%expect_test "contents_result" =
           (invalid_rewrites |> File_rewriter.Invalid_rewrites.sexp_of_t));
      [%expect
        {|
-       (foo.txt ((start 2) (stop 11) (replace_by You!))
-        ((start 3) (stop 3) (replace_by "Big ")))
+       ((path foo.txt)
+        (rewrites_with_overlap
+         (((start 2) (stop 11) (replace_by You!))
+          ((start 3) (stop 3) (replace_by "Big ")))))
        |}]);
   (match File_rewriter.contents file_rewriter with
    | (_ : string) -> assert false
@@ -380,9 +382,11 @@ let%expect_test "contents_result" =
      print_endline (Sexplib0.Sexp.to_string_hum (Sexplib0.Sexp_conv.sexp_of_exn exn));
      [%expect
        {|
-       (File_rewriter.Invalid_rewrites foo.txt
-        ((start 2) (stop 11) (replace_by You!))
-        ((start 3) (stop 3) (replace_by "Big ")))
+       (File_rewriter.Invalid_rewrites
+        ((path foo.txt)
+         (rewrites_with_overlap
+          (((start 2) (stop 11) (replace_by You!))
+           ((start 3) (stop 3) (replace_by "Big "))))))
        |}];
      ());
   ()

@@ -89,12 +89,15 @@ module Invalid_rewrites = struct
       ]
   ;;
 
-  let to_sexps { path; rewrites_with_overlap } =
-    Sexplib0.Sexp.Atom (path |> Fpath.to_string)
-    :: List.map Rewrite.sexp_of_t rewrites_with_overlap
+  let sexp_of_t { path; rewrites_with_overlap } =
+    Sexplib0.Sexp.List
+      [ List [ Atom "path"; Atom (path |> Fpath.to_string) ]
+      ; List
+          [ Atom "rewrites_with_overlap"
+          ; List (List.map Rewrite.sexp_of_t rewrites_with_overlap)
+          ]
+      ]
   ;;
-
-  let sexp_of_t t = Sexplib0.Sexp.List (to_sexps t)
 end
 
 exception Invalid_rewrites of Invalid_rewrites.t
@@ -105,7 +108,7 @@ let () =
     [%extension_constructor Invalid_rewrites]
     (function
     | Invalid_rewrites t ->
-      List (Atom "File_rewriter.Invalid_rewrites" :: Invalid_rewrites.to_sexps t)
+      List [ Atom "File_rewriter.Invalid_rewrites"; Invalid_rewrites.sexp_of_t t ]
     | _ -> assert false)
 ;;
 
