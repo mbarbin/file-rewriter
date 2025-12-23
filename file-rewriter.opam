@@ -10,6 +10,7 @@ bug-reports: "https://github.com/mbarbin/file-rewriter/issues"
 depends: [
   "dune" {>= "3.17"}
   "ocaml" {>= "5.2"}
+  "dyn" {>= "3.17"}
   "fpath" {>= "0.7.3"}
   "loc" {>= "0.2.2"}
   "sexplib0" {>= "v0.17"}

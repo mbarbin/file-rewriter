@@ -28,6 +28,14 @@ module Rewrite = struct
     ; replace_by : string
     }
 
+  let to_dyn { start; stop; replace_by } =
+    Dyn.Record
+      [ "start", start |> Dyn.int
+      ; "stop", stop |> Dyn.int
+      ; "replace_by", replace_by |> Dyn.string
+      ]
+  ;;
+
   let sexp_of_t { start; stop; replace_by } =
     Sexplib0.Sexp.List
       [ List [ Atom "start"; Sexplib0.Sexp_conv.sexp_of_int start ]
@@ -74,21 +82,43 @@ module Invalid_rewrites = struct
     ; rewrites_with_overlap : Rewrite.t list
     }
 
-  let to_sexps { path; rewrites_with_overlap } =
-    Sexplib0.Sexp.Atom (path |> Fpath.to_string)
-    :: List.map Rewrite.sexp_of_t rewrites_with_overlap
+  let to_dyn { path; rewrites_with_overlap } =
+    Dyn.Record
+      [ "path", Dyn.string (path |> Fpath.to_string)
+      ; "rewrites_with_overlap", Dyn.list Rewrite.to_dyn rewrites_with_overlap
+      ]
   ;;
 
-  let sexp_of_t t = Sexplib0.Sexp.List (to_sexps t)
+  let sexp_of_t { path; rewrites_with_overlap } =
+    Sexplib0.Sexp.List
+      [ List [ Atom "path"; Atom (path |> Fpath.to_string) ]
+      ; List
+          [ Atom "rewrites_with_overlap"
+          ; List (List.map Rewrite.sexp_of_t rewrites_with_overlap)
+          ]
+      ]
+  ;;
 end
 
 exception Invalid_rewrites of Invalid_rewrites.t
 
 let () =
-  Sexplib0.Sexp_conv.Exn_converter.add [%extension_constructor Invalid_rewrites] (function
+  Sexplib0.Sexp_conv.Exn_converter.add
+    ~printexc:false
+    [%extension_constructor Invalid_rewrites]
+    (function
     | Invalid_rewrites t ->
-      List (Atom "File_rewriter.Invalid_rewrites" :: Invalid_rewrites.to_sexps t)
+      List [ Atom "File_rewriter.Invalid_rewrites"; Invalid_rewrites.sexp_of_t t ]
     | _ -> assert false)
+;;
+
+let () =
+  Printexc.register_printer (function
+    | Invalid_rewrites t ->
+      Some
+        (Dyn.to_string
+           (Dyn.Variant ("File_rewriter.Invalid_rewrites", [ Invalid_rewrites.to_dyn t ])))
+    | _ -> None [@coverage off])
 ;;
 
 let[@tail_mod_cons] rec rewrites_with_overlap current_offset = function

@@ -1,8 +1,8 @@
 (library
- (name file_rewriter)
- (public_name file-rewriter)
+ (name stdlib_for_test)
+ (package file-rewriter-tests)
  (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a)
- (libraries dyn fpath loc sexplib0)
+ (libraries dyn pp)
  (instrumentation
   (backend bisect_ppx))
  (lint
