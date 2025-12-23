@@ -83,9 +83,10 @@ module Invalid_rewrites = struct
     }
 
   let to_dyn { path; rewrites_with_overlap } =
-    Dyn.Tuple
-      (Dyn.string (path |> Fpath.to_string)
-       :: List.map Rewrite.to_dyn rewrites_with_overlap)
+    Dyn.Record
+      [ "path", Dyn.string (path |> Fpath.to_string)
+      ; "rewrites_with_overlap", Dyn.list Rewrite.to_dyn rewrites_with_overlap
+      ]
   ;;
 
   let to_sexps { path; rewrites_with_overlap } =
@@ -103,6 +104,15 @@ let () =
     | Invalid_rewrites t ->
       List (Atom "File_rewriter.Invalid_rewrites" :: Invalid_rewrites.to_sexps t)
     | _ -> assert false)
+;;
+
+let () =
+  Printexc.register_printer (function
+    | Invalid_rewrites t ->
+      Some
+        (Dyn.to_string
+           (Dyn.Variant ("File_rewriter.Invalid_rewrites", [ Invalid_rewrites.to_dyn t ])))
+    | _ -> None [@coverage off])
 ;;
 
 let[@tail_mod_cons] rec rewrites_with_overlap current_offset = function

@@ -166,9 +166,13 @@ let%expect_test "replace" =
     test ());
   [%expect
     {|
-    (File_rewriter.Invalid_rewrites foo.txt
-      ((start 0) (stop 11) (replace_by "Hi, You!"))
-      ((start 6) (stop 6) (replace_by "Awesome ")))
+    File_rewriter.Invalid_rewrites
+      { path = "foo.txt"
+      ; rewrites_with_overlap =
+          [ { start = 0; stop = 11; replace_by = "Hi, You!" }
+          ; { start = 6; stop = 6; replace_by = "Awesome " }
+          ]
+      }
     |}];
   reset ();
   ()
@@ -246,8 +250,13 @@ let%expect_test "invalid rewrites" =
   require_does_raise (fun () -> test ());
   [%expect
     {|
-    (File_rewriter.Invalid_rewrites foo.txt ((start 0) (stop 5) (replace_by Hi))
-      ((start 3) (stop 3) (replace_by "Big ")))
+    File_rewriter.Invalid_rewrites
+      { path = "foo.txt"
+      ; rewrites_with_overlap =
+          [ { start = 0; stop = 5; replace_by = "Hi" }
+          ; { start = 3; stop = 3; replace_by = "Big " }
+          ]
+      }
     |}];
   reset ();
   (* Here is a suitable solution for what was attempted above: *)
@@ -284,8 +293,13 @@ let%expect_test "invalid rewrites" =
   require_does_raise (fun () -> test ());
   [%expect
     {|
-    (File_rewriter.Invalid_rewrites foo.txt ((start 0) (stop 5) (replace_by Hi))
-      ((start 3) (stop 8) (replace_by Universe)))
+    File_rewriter.Invalid_rewrites
+      { path = "foo.txt"
+      ; rewrites_with_overlap =
+          [ { start = 0; stop = 5; replace_by = "Hi" }
+          ; { start = 3; stop = 8; replace_by = "Universe" }
+          ]
+      }
     |}];
   (* More coverage cases with 3 rewrites. *)
   reset ();
@@ -295,8 +309,13 @@ let%expect_test "invalid rewrites" =
   require_does_raise (fun () -> test ());
   [%expect
     {|
-    (File_rewriter.Invalid_rewrites foo.txt ((start 0) (stop 2) (replace_by Hi))
-      ((start 1) (stop 3) (replace_by Hi)))
+    File_rewriter.Invalid_rewrites
+      { path = "foo.txt"
+      ; rewrites_with_overlap =
+          [ { start = 0; stop = 2; replace_by = "Hi" }
+          ; { start = 1; stop = 3; replace_by = "Hi" }
+          ]
+      }
     |}];
   ()
 ;;
@@ -323,23 +342,48 @@ let%expect_test "contents_result" =
     Hello Newline
     |}];
   File_rewriter.insert file_rewriter ~offset:3 ~text:"Big ";
-  let () =
-    match File_rewriter.contents_result file_rewriter with
-    | Ok (_ : string) -> assert false
-    | Error invalid_rewrites ->
-      print_endline
-        (Sexplib0.Sexp.to_string_hum
-           (invalid_rewrites |> File_rewriter.Invalid_rewrites.sexp_of_t));
-      print_dyn (invalid_rewrites |> File_rewriter.Invalid_rewrites.to_dyn);
-      ()
-  in
+  require_does_raise (fun () -> File_rewriter.contents file_rewriter);
   [%expect
     {|
-    (foo.txt ((start 2) (stop 11) (replace_by You!))
-     ((start 3) (stop 3) (replace_by "Big ")))
-    ("foo.txt",
-     { start = 2; stop = 11; replace_by = "You!" },
-     { start = 3; stop = 3; replace_by = "Big " })
+    File_rewriter.Invalid_rewrites
+      { path = "foo.txt"
+      ; rewrites_with_overlap =
+          [ { start = 2; stop = 11; replace_by = "You!" }
+          ; { start = 3; stop = 3; replace_by = "Big " }
+          ]
+      }
     |}];
+  (match File_rewriter.contents_result file_rewriter with
+   | Ok (_ : string) -> assert false
+   | Error invalid_rewrites ->
+     print_endline
+       (Sexplib0.Sexp.to_string_hum
+          (invalid_rewrites |> File_rewriter.Invalid_rewrites.sexp_of_t));
+     [%expect
+       {|
+       (foo.txt ((start 2) (stop 11) (replace_by You!))
+        ((start 3) (stop 3) (replace_by "Big ")))
+       |}]);
+  (match File_rewriter.contents file_rewriter with
+   | (_ : string) -> assert false
+   | exception (File_rewriter.Invalid_rewrites invalid_rewrites as exn) ->
+     print_dyn (invalid_rewrites |> File_rewriter.Invalid_rewrites.to_dyn);
+     [%expect
+       {|
+       { path = "foo.txt"
+       ; rewrites_with_overlap =
+           [ { start = 2; stop = 11; replace_by = "You!" }
+           ; { start = 3; stop = 3; replace_by = "Big " }
+           ]
+       }
+       |}];
+     print_endline (Sexplib0.Sexp.to_string_hum (Sexplib0.Sexp_conv.sexp_of_exn exn));
+     [%expect
+       {|
+       (File_rewriter.Invalid_rewrites foo.txt
+        ((start 2) (stop 11) (replace_by You!))
+        ((start 3) (stop 3) (replace_by "Big ")))
+       |}];
+     ());
   ()
 ;;
