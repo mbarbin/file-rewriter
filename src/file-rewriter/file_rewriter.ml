@@ -100,7 +100,10 @@ end
 exception Invalid_rewrites of Invalid_rewrites.t
 
 let () =
-  Sexplib0.Sexp_conv.Exn_converter.add [%extension_constructor Invalid_rewrites] (function
+  Sexplib0.Sexp_conv.Exn_converter.add
+    ~printexc:false
+    [%extension_constructor Invalid_rewrites]
+    (function
     | Invalid_rewrites t ->
       List (Atom "File_rewriter.Invalid_rewrites" :: Invalid_rewrites.to_sexps t)
     | _ -> assert false)
