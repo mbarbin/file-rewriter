@@ -14,43 +14,15 @@
 (*_  limitations under the License.                                            *)
 (*_*****************************************************************************)
 
-(** Extending [Stdlib] for use in the tests in this project. *)
+(*_ Inspired by a similar module in stdune. *)
 
-module Code_error = Code_error
-module Dyn = Dyn
+(** A programming error that should be reported upstream *)
 
-val print_dyn : Dyn.t -> unit
-val phys_equal : 'a -> 'a -> bool
+type t =
+  { message : string
+  ; data : (string * Dyn.t) list
+  }
 
-module List : sig
-  include module type of struct
-    include Stdlib.ListLabels
-  end
+exception E of t
 
-  val iter : 'a t -> f:('a -> unit) -> unit
-  val map : 'a t -> f:('a -> 'b) -> 'b t
-  val sort : 'a t -> compare:('a -> 'a -> int) -> 'a t
-end
-
-module String : sig
-  include module type of struct
-    include Stdlib.StringLabels
-  end
-
-  val to_dyn : t -> Dyn.t
-  val split : t -> on:char -> t list
-end
-
-val require : bool -> unit
-val require_does_raise : (unit -> 'a) -> unit
-
-module With_equal_and_dyn : sig
-  module type S = sig
-    type t
-
-    val equal : t -> t -> bool
-    val to_dyn : t -> Dyn.t
-  end
-end
-
-val require_equal : (module With_equal_and_dyn.S with type t = 'a) -> 'a -> 'a -> unit
+val raise : string -> (string * Dyn.t) list -> _

@@ -53,7 +53,7 @@ let original_contents =
   (preprocess
    (pps ppx_sexp_conv ppx_sexp_value)))
 |}
-  |> String.strip
+  |> String.trim
   |> fun s -> s ^ "\n"
 ;;
 
@@ -85,17 +85,13 @@ let%expect_test "libraries sorting" =
     (Sexps_rewriter.file_rewriter sexps_rewriter |> File_rewriter.path |> Fpath.to_string);
   [%expect {| path/lib/dune |}];
   (* If we do nothing, the output shall be equal to that with which we started. *)
-  require_equal
-    [%here]
-    (module String)
-    original_contents
-    (Sexps_rewriter.contents sexps_rewriter);
+  require_equal (module String) original_contents (Sexps_rewriter.contents sexps_rewriter);
   [%expect {||}];
   let () =
     match Sexps_rewriter.contents_result sexps_rewriter with
     | Error _ -> assert false
     | Ok contents ->
-      require_equal [%here] (module String) original_contents contents;
+      require_equal (module String) original_contents contents;
       [%expect {||}]
   in
   let print_diff () =
@@ -135,7 +131,7 @@ let%expect_test "libraries sorting" =
           | List _ -> assert false)
         |> List.sort ~compare:String.compare
       in
-      List.iter2_exn libraries reordered ~f:(fun sexp name ->
+      List.iter2 libraries reordered ~f:(fun sexp name ->
         File_rewriter.replace
           file_rewriter
           ~range:(Sexps_rewriter.range sexps_rewriter sexp)
@@ -238,7 +234,7 @@ let syntax_error =
   (preprocess
    (pps ppx_jane ppx_js_style -check-doc-comments)))
 |}
-  |> String.strip
+  |> String.trim
 ;;
 
 let%expect_test "syntax-error" =
@@ -271,17 +267,14 @@ let%expect_test "invalid positions" =
     | Ok t -> t
     | Error { loc = _; message = _ } -> assert false
   in
-  require_does_raise [%here] (fun () ->
+  require_does_raise (fun () ->
     Sexps_rewriter.position sexps_rewriter (List [ Atom "foo" ]));
   [%expect
     {|
     (Sexps_rewriter.Position_not_found
-      (((line 1) (col 0)  (offset 0))
-       ((line 1) (col 1)  (offset 1))
-       ((line 1) (col 5)  (offset 5))
-       ((line 1) (col 7)  (offset 7))
-       ((line 1) (col 11) (offset 11))
-       ((line 1) (col 12) (offset 12)))
+      (((line 1) (col 0) (offset 0)) ((line 1) (col 1) (offset 1))
+        ((line 1) (col 5) (offset 5)) ((line 1) (col 7) (offset 7))
+        ((line 1) (col 11) (offset 11)) ((line 1) (col 12) (offset 12)))
       (foo))
     |}];
   ()
