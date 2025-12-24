@@ -1,3 +1,10 @@
+## 0.0.4 (unreleased)
+
+### Changed
+
+- Improve invalid rewrites exn printing with `dyn` (#15, @mbarbin).
+- Assorted changes related to internal maintenance (CI, tests, deps, etc.) (@mbarbin).
+
 ## 0.0.3 (2024-09-29)
 
 ### Changed
