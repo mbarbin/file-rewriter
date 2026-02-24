@@ -15,12 +15,12 @@
   file-rewriter
   fpath
   parsexp
-  patdiff.expect_test_patdiff
   pp
   pplumbing-err
   sexps_rewriter
   stdlib_for_test
-  unix)
+  unix
+  windtrap.myers)
  (inline_tests)
  (instrumentation
   (backend bisect_ppx))

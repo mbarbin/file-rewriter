@@ -96,10 +96,14 @@ let%expect_test "libraries sorting" =
   in
   let print_diff () =
     let modified_contents = Sexps_rewriter.contents sexps_rewriter in
-    Expect_test_patdiff.print_patdiff original_contents modified_contents ~context:3
+    Myers.print_diff original_contents modified_contents ~context:3
   in
   print_diff ();
-  [%expect {||}];
+  [%expect
+    {|
+    --- expected
+    +++ actual
+    |}];
   (* Let's start with a small experiment: we will rename "name" to "public_name". *)
   Sexps_rewriter.visit sexps_rewriter ~f:(fun sexp ~range ~file_rewriter ->
     match sexp with
@@ -110,11 +114,13 @@ let%expect_test "libraries sorting" =
   print_diff ();
   [%expect
     {|
-    -1,6 +1,6
+    --- expected
+    +++ actual
+    @@ -1,6 +1,6 @@
       ; Hey this is a comment, which we should preserve !!!
       (library
-    -|  (name sexps_rewriter_test)
-    +|  (public_name sexps_rewriter_test)
+    -   (name sexps_rewriter_test)
+    +   (public_name sexps_rewriter_test)
         (flags -w +a-4-40-42-44-66 -warn-error +a)
         (libraries
          expect_test_helpers_core
@@ -141,22 +147,23 @@ let%expect_test "libraries sorting" =
   print_diff ();
   [%expect
     {|
-    -1,13 +1,13
+    --- expected
+    +++ actual
+    @@ -1,13 +1,13 @@
       ; Hey this is a comment, which we should preserve !!!
       (library
-    -|  (name sexps_rewriter_test)
-    +|  (public_name sexps_rewriter_test)
+    -   (name sexps_rewriter_test)
+    +   (public_name sexps_rewriter_test)
         (flags -w +a-4-40-42-44-66 -warn-error +a)
         (libraries
-    +|   base
-         expect_test_helpers_core
-    -|   base
-    -|   sexps_rewriter
-    -|   file_rewriter
-    -|   parsexp)
-    +|   file_rewriter
-    +|   parsexp
-    +|   sexps_rewriter)
+    -    expect_test_helpers_core
+         base
+    -    sexps_rewriter
+    +    expect_test_helpers_core
+         file_rewriter
+    -    parsexp)
+    +    parsexp
+    +    sexps_rewriter)
         ; This is another comment.
         (inline_tests)
         (lint (pps ppx_js_style -check-doc-comments))

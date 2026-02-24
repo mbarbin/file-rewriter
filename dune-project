@@ -65,8 +65,6 @@
    (>= 0.2.2))
   (parsexp
    (>= v0.17))
-  (patdiff
-   (>= v0.17))
   (pp
    (>= 2.0.0))
   (pplumbing-err
@@ -78,7 +76,9 @@
   (sexplib0
    (>= v0.17))
   (sexps-rewriter
-   (= :version))))
+   (= :version))
+  (windtrap
+   (>= 0.1.0))))
 
 (package
  (name file-rewriter-dev)
