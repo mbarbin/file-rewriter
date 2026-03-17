@@ -23,6 +23,7 @@ depends: [
   "ppxlib" {>= "0.33"}
   "sexplib0" {>= "v0.17"}
   "sexps-rewriter" {= version}
+  "windtrap" {with-test & >= "0.1.0"}
   "odoc" {with-doc}
 ]
 build: [

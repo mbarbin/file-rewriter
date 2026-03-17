@@ -1,0 +1,8 @@
+(library
+ (name file_rewriter_myers)
+ (package file-rewriter-tests)
+ (instrumentation
+  (backend bisect_ppx))
+ (lint
+  (pps ppx_js_style -allow-let-operators -check-doc-comments))
+ (preprocess no_preprocessing))
