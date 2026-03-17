@@ -1,45 +1,7 @@
-(******************************************************************************)
-(*  Copyright 2024 Mathieu Barbin <mathieu.barbin@gmail.com>                  *)
-(*                                                                            *)
-(*  Licensed under the Apache License, Version 2.0 (the "License");           *)
-(*  you may not use this file except in compliance with the License.          *)
-(*  You may obtain a copy of the License at                                   *)
-(*                                                                            *)
-(*  http://www.apache.org/licenses/LICENSE-2.0                                *)
-(*                                                                            *)
-(*  Unless required by applicable law or agreed to in writing, software       *)
-(*  distributed under the License is distributed on an "AS IS" BASIS,         *)
-(*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  *)
-(*  See the License for the specific language governing permissions and       *)
-(*  limitations under the License.                                            *)
-(******************************************************************************)
+(*********************************************************************************)
+(*  file-rewriter: Apply small rewrites to tweak or refactor your files          *)
+(*  SPDX-FileCopyrightText: 2024-2026 Mathieu Barbin <mathieu.barbin@gmail.com>  *)
+(*  SPDX-License-Identifier: Apache-2.0                                          *)
+(*********************************************************************************)
 
-module Code_error = Code_error0
-module Dyn = Dyn0
-module List = List0
-module String = String0
-module With_equal_and_dyn = With_equal_and_dyn0
-
-let print pp = Format.printf "%a@." Pp.to_fmt pp
-let print_dyn dyn = print (Dyn.pp dyn)
-let phys_equal a b = a == b
-let require cond = if not cond then failwith "Required condition does not hold"
-
-let require_does_raise f =
-  match f () with
-  | _ -> Code_error.raise "Did not raise." []
-  | exception e -> print_endline (Printexc.to_string e)
-;;
-
-let require_equal
-      (type a)
-      (module M : With_equal_and_dyn.S with type t = a)
-      (v1 : a)
-      (v2 : a)
-  =
-  if not (M.equal v1 v2)
-  then
-    Code_error.raise
-      "Values are not equal."
-      [ "v1", v1 |> M.to_dyn; "v2", v2 |> M.to_dyn ]
-;;
+include Stdlib0

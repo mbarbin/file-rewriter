@@ -4,9 +4,14 @@
 (*_  SPDX-License-Identifier: Apache-2.0                                          *)
 (*_********************************************************************************)
 
-include module type of struct
-  include Stdlib.StringLabels
-end
+module Code_error = Code_error0
+module Dyn = Dyn0
+module List = List0
+module String = String0
+module With_equal_and_dyn = With_equal_and_dyn0
 
-val to_dyn : t -> Dyn.t
-val split : t -> on:char -> t list
+val print_dyn : Dyn.t -> unit
+val phys_equal : 'a -> 'a -> bool
+val require : bool -> unit
+val require_does_raise : (unit -> 'a) -> unit
+val require_equal : (module With_equal_and_dyn.S with type t = 'a) -> 'a -> 'a -> unit
