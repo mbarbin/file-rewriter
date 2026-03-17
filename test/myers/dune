@@ -8,10 +8,8 @@
   -warn-error
   +a
   -open
-  Stdlib_for_test
-  -open
-  File_rewriter_myers)
- (libraries file_rewriter_myers stdlib_for_test)
+  Stdlib_for_test)
+ (libraries stdlib_for_test)
  (inline_tests)
  (instrumentation
   (backend bisect_ppx))
