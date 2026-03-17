@@ -1,7 +1,0 @@
-# List of directories for headache.sh
-# Add new directories below. Lines starting with '#' are ignored.
-src/file-rewriter
-src/sexps-rewriter
-test/file-rewriter
-test/sexps-rewriter
-test/stdlib
