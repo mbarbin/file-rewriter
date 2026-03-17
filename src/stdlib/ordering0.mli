@@ -5,9 +5,5 @@
 (*_********************************************************************************)
 
 include module type of struct
-  include Stdlib.ListLabels
+  include Ordering
 end
-
-val iter : 'a t -> f:('a -> unit) -> unit
-val map : 'a t -> f:('a -> 'b) -> 'b t
-val sort : 'a t -> compare:('a -> 'a -> Ordering0.t) -> 'a t

@@ -63,6 +63,8 @@
    (>= 0.7.3))
   (loc
    (>= 0.2.2))
+  (ordering
+   (>= 3.17))
   (parsexp
    (>= v0.17))
   (patdiff

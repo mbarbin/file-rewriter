@@ -6,5 +6,6 @@
 
 include Stdlib.StringLabels
 
+let compare a b = Ordering.of_int (compare a b)
 let to_dyn = Dyn.string
 let split t ~on = split_on_char ~sep:on t

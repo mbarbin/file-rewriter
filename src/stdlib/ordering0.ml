@@ -4,13 +4,4 @@
 (*  SPDX-License-Identifier: Apache-2.0                                          *)
 (*********************************************************************************)
 
-module Ordering = Ordering0
-include Stdlib.ListLabels
-
-let iter t ~f = iter ~f t
-let map t ~f = map ~f t
-
-let sort t ~compare =
-  let cmp a b = compare a b |> Ordering.to_int in
-  sort ~cmp t
-;;
+include Ordering
