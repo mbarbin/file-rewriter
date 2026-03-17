@@ -15,7 +15,6 @@
   file-rewriter
   fpath
   parsexp
-  patdiff.expect_test_patdiff
   pp
   pplumbing-err
   sexps_rewriter

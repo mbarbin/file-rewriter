@@ -16,7 +16,6 @@ depends: [
   "loc" {>= "0.2.2"}
   "ordering" {>= "3.17"}
   "parsexp" {>= "v0.17"}
-  "patdiff" {>= "v0.17"}
   "pp" {>= "2.0.0"}
   "pplumbing-err" {>= "0.0.16"}
   "ppx_expect" {>= "v0.17"}

@@ -67,8 +67,6 @@
    (>= 3.17))
   (parsexp
    (>= v0.17))
-  (patdiff
-   (>= v0.17))
   (pp
    (>= 2.0.0))
   (pplumbing-err
