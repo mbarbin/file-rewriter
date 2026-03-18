@@ -1,0 +1,6 @@
+(test
+ (name test_myers)
+ (package file-rewriter-tests)
+ (modules test_myers)
+ (flags -open File_rewriter_myers)
+ (libraries file_rewriter_myers windtrap))

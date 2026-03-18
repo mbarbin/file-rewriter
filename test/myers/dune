@@ -1,5 +1,5 @@
 (library
- (name sexps_rewriter_test)
+ (name file_rewriter_myers_test)
  (package file-rewriter-tests)
  (flags
   :standard
@@ -8,18 +8,8 @@
   -warn-error
   +a
   -open
-  Pplumbing_err
-  -open
   Stdlib_for_test)
- (libraries
-  file-rewriter
-  fpath
-  parsexp
-  pp
-  pplumbing-err
-  sexps_rewriter
-  stdlib_for_test
-  unix)
+ (libraries stdlib_for_test)
  (inline_tests)
  (instrumentation
   (backend bisect_ppx))

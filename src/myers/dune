@@ -1,8 +1,6 @@
 (library
- (name stdlib_for_test)
+ (name file_rewriter_myers)
  (package file-rewriter-tests)
- (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a)
- (libraries dyn file_rewriter_myers ordering pp)
  (instrumentation
   (backend bisect_ppx))
  (lint
