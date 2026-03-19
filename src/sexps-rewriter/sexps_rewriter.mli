@@ -24,9 +24,9 @@ module Parse_error : sig
       as shown below:
 
       {[
-        match Sexps_rewriter.create ~path ~original_contents with
-        | Ok r -> r
-        | Error { loc; message } -> Err.raise ~loc [ Pp.text message ]
+      match Sexps_rewriter.create ~path ~original_contents with
+      | Ok r -> r
+      | Error { loc; message } -> Err.raise ~loc [ Pp.text message ]
       ]} *)
   type t =
     { loc : Loc.t
