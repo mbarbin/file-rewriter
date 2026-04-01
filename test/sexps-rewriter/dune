@@ -8,18 +8,8 @@
   -warn-error
   +a
   -open
-  Pplumbing_err
-  -open
   Stdlib_for_test)
- (libraries
-  file-rewriter
-  fpath
-  parsexp
-  pp
-  pplumbing-err
-  sexps_rewriter
-  stdlib_for_test
-  unix)
+ (libraries file-rewriter fpath parsexp sexps_rewriter stdlib_for_test unix)
  (inline_tests)
  (instrumentation
   (backend bisect_ppx))

@@ -6,9 +6,11 @@
 
 module Code_error = Code_error0
 module Dyn = Dyn0
+module Err = Err0
 module List = List0
 module Myers = Myers0
 module Ordering = Ordering0
+module Pp = Pp0
 module String = String0
 module With_equal_and_dyn = With_equal_and_dyn0
 
