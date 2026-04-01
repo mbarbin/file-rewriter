@@ -307,9 +307,9 @@ let%expect_test "atom" =
   print_endline (Sexps_rewriter.contents sexps_rewriter);
   [%expect
     {|
-    Hello
     File "path/lib/atom", line 1, characters 0-5:
     Warning: This is an atom.
+    Hello
     |}];
   ()
 ;;

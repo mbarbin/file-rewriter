@@ -5,5 +5,5 @@
 (*_********************************************************************************)
 
 include module type of struct
-  include Pplumbing_err.Code_error
+  include Pp
 end

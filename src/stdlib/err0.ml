@@ -4,4 +4,4 @@
 (*  SPDX-License-Identifier: Apache-2.0                                          *)
 (*********************************************************************************)
 
-include Pplumbing_err.Code_error
+include Pplumbing_err.Err

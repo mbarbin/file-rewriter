@@ -70,7 +70,7 @@
   (pp
    (>= 2.0.0))
   (pplumbing-err
-   (>= 0.0.16))
+   (>= 0.0.17))
   (ppx_expect
    (>= v0.17))
   (ppxlib
