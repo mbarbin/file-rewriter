@@ -17,4 +17,4 @@ We created these libraries as part of an ongoing work to create linting and refa
 
 We've been inspired by this [blog post](https://blog.janestreet.com/converting-a-code-base-from-camlp4-to-ppx/).
 
-In particular, we've reused the idea of registering substitutions while itering through the locations of an AST. While we didn't reuse any particular project or existing code for our libraries, we're thankful to Jeremie Dimino and Jane Street for the work and technics discussed in their blog post.
+In particular, we've reused the idea of registering substitutions while itering through the locations of an AST. While we didn't reuse any particular project or existing code for our libraries, we're thankful to Jeremie Dimino and Jane Street for the work and techniques discussed in their blog post.
