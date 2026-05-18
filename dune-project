@@ -73,8 +73,6 @@
    (>= 0.0.17))
   (ppx_expect
    (>= v0.17))
-  (ppxlib
-   (>= 0.33))
   (sexplib0
    (>= v0.17))
   (sexps-rewriter
@@ -97,8 +95,6 @@
    (= :version))
   (ppx_js_style
    (>= v0.17))
-  (ppxlib
-   (>= 0.33))
   (sexps-rewriter
    (= :version))
   (sherlodoc

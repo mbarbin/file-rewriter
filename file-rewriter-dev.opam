@@ -15,7 +15,6 @@ depends: [
   "file-rewriter" {= version}
   "file-rewriter-tests" {= version}
   "ppx_js_style" {>= "v0.17"}
-  "ppxlib" {>= "0.33"}
   "sexps-rewriter" {= version}
   "sherlodoc" {>= "0.2"}
   "odoc" {with-doc}
