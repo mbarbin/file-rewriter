@@ -16,15 +16,15 @@ Under `third-party-license/` we include the license of software used as vendored
 
 ## Gazagnaire ocaml-merge3 (Myers diff)
 
-The Myers shortest-edit-script computation in `src/myers/merge3.ml` is vendored
+The Myers shortest-edit-script computation in `src/merge3/merge3.ml` is vendored
 from [ocaml-merge3](https://tangled.org/gazagnaire.org/ocaml-merge3) by Thomas
 Gazagnaire (released under `ISC`). Only the pure diff computation is vendored;
 the parts unused by this project are not included. The exact provenance and list
-of changes are documented at the top of `src/myers/merge3.ml` and in
-`src/myers/vendor.json`.
+of changes are documented at the top of `src/merge3/merge3.ml` and in
+`src/merge3/vendor.json`.
 
 A copy of the license file for ocaml-merge3 is located under
-`third-party-license/gazagnaire/ocaml-merge3/LICENSE`.
+`third-party-license/gazagnaire/ocaml-merge3/LICENSE.md`.
 
 ## Windtrap (unified-diff renderer)
 
